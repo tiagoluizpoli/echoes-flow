@@ -6,10 +6,13 @@
   "scripts": {
     "dev:front": "yarn workspace frontend dev",
     "dev:back": "yarn workspace backend dev",
-    "dev": "concurrently \"yarn dev:front\" \"yarn dev:back\""
+    "dev": "concurrently --prefix '[{name}]' \"yarn dev:front\" \"yarn dev:back\""
   },
   "workspaces": [
     "backend",
     "frontend"
-  ]
+  ],
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
 }
