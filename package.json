@@ -1,0 +1,15 @@
+{
+  "name": "echoes-flow",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev:front": "yarn workspace frontend dev",
+    "dev:back": "yarn workspace backend dev",
+    "dev": "concurrently \"yarn dev:front\" \"yarn dev:back\""
+  },
+  "workspaces": [
+    "backend",
+    "frontend"
+  ]
+}
