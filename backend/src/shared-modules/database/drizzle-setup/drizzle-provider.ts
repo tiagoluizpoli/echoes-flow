@@ -1,13 +1,11 @@
-import { Provider } from '@nestjs/common';
-import { Pool } from 'pg';
-
+import type { Provider } from '@nestjs/common';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from './schema';
+import { Pool } from 'pg';
 import { env } from 'src/shared-modules/core';
-
+import * as schema from './schema';
 
 const pool = new Pool({
-  connectionString: env.DATABASE_URL
+  connectionString: env.DATABASE_URL,
 });
 
 export const db = drizzle(pool, { schema });
