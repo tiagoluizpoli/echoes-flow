@@ -7,7 +7,12 @@
     "dev:front": "yarn workspace frontend dev",
     "dev:back": "yarn workspace backend dev",
     "dev": "concurrently --prefix '[{name}]' \"yarn dev:front\" \"yarn dev:back\"",
-    "lint": "exec biome check --write backend frontend"
+    "typecheck:front": "yarn workspace frontend typecheck",
+    "typecheck:back": "yarn workspace backend typecheck",
+    "typecheck": "yarn typecheck:front && typecheck:back",
+    "lint": "exec biome check --write backend frontend",
+    "docker:up": "docker compose up -d",
+    "docker:down": "docker compose down"
   },
   "workspaces": [
     "backend",
@@ -17,6 +22,6 @@
     "concurrently": "^9.2.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.3"
+    "@biomejs/biome": "2.2.2"
   }
 }

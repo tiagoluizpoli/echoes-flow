@@ -1,0 +1,18 @@
+services:
+  postgres:
+    image: postgres:16.6
+    container_name: echoes-flow
+    ports:
+      - '5493:5432'
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=echoes-flow-pw
+    volumes:
+      - postgres-nexus-data:/var/lib/postgresql/data
+    networks:
+      - echoes-flow
+volumes:
+  postgres-nexus-data:
+networks:
+  echoes-flow:
+    driver: bridge

@@ -1,12 +1,17 @@
 {
-  "$schema": "https://biomejs.dev/schemas/2.2.3/schema.json",
+  "$schema": "https://biomejs.dev/schemas/2.2.2/schema.json",
   "vcs": {
     "enabled": false,
     "clientKind": "git"
   },
   "files": {
     "ignoreUnknown": false,
-    "includes": ["**", "!src/components/ui", "!src/route-tree.gen.ts"]
+    "includes": [
+      "**",
+      "!src/components/ui",
+      "!src/route-tree.gen.ts",
+      "!backend/dist"
+    ]
   },
   "formatter": {
     "enabled": true,
@@ -18,6 +23,7 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+
       "correctness": {
         "noChildrenProp": "off",
         "noUnusedImports": {
@@ -28,12 +34,14 @@
       },
       "suspicious": {
         "noArrayIndexKey": "off",
-        "noUnknownAtRules": "off"
+        "noUnknownAtRules": "off",
+        "noExplicitAny": "off"
       },
       "a11y": {
         "noStaticElementInteractions": "off"
       },
       "style": {
+        "useImportType": "off",
         "useFilenamingConvention": {
           "level": "error",
           "options": {

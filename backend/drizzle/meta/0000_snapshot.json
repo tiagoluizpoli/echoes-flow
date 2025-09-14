@@ -1,5 +1,5 @@
 {
-  "id": "d1a02c09-a768-4216-97d9-5528e9a937d8",
+  "id": "7b72ea16-4181-4529-9711-166ddcbac6ae",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -86,12 +86,8 @@
           "name": "member_associations_user_id_users_id_fk",
           "tableFrom": "member_associations",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -99,12 +95,8 @@
           "name": "member_associations_organization_id_organizations_id_fk",
           "tableFrom": "member_associations",
           "tableTo": "organizations",
-          "columnsFrom": [
-            "organization_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["organization_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -114,10 +106,7 @@
         "unique_user_org": {
           "name": "unique_user_org",
           "nullsNotDistinct": false,
-          "columns": [
-            "user_id",
-            "organization_id"
-          ]
+          "columns": ["user_id", "organization_id"]
         }
       },
       "policies": {},
@@ -176,9 +165,7 @@
         "organizations_stripe_customer_id_unique": {
           "name": "organizations_stripe_customer_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "stripe_customer_id"
-          ]
+          "columns": ["stripe_customer_id"]
         }
       },
       "policies": {},
@@ -222,9 +209,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -236,29 +221,17 @@
     "public.member_role": {
       "name": "member_role",
       "schema": "public",
-      "values": [
-        "admin",
-        "leader",
-        "member"
-      ]
+      "values": ["admin", "leader", "member"]
     },
     "public.member_status": {
       "name": "member_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "active"
-      ]
+      "values": ["pending", "active"]
     },
     "public.subscription_status": {
       "name": "subscription_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "active",
-        "paused",
-        "ended"
-      ]
+      "values": ["pending", "active", "paused", "ended"]
     }
   },
   "schemas": {},
