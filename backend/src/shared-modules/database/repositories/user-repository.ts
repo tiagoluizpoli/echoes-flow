@@ -46,6 +46,10 @@ export class UserRepository {
   }
 
   async deleteUser(id: string) {
-    await db.delete(usersTable).where(eq(usersTable.id, id)).execute();
+    await db
+      .update(usersTable)
+      .set({ deletedAt: new Date() })
+      .where(eq(usersTable.id, id))
+      .execute();
   }
 }

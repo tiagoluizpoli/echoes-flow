@@ -29,26 +29,48 @@ export const memberStatusEnum = pgEnum('member_status', ['pending', 'active']);
 // --- Tables ---
 
 // Tabela de Organizações
-export const organizationsTable = pgTable('organizations', {
-  id: varchar('id', { length: 255 }).primaryKey(),
-  name: varchar('name', { length: 255 }).notNull(),
-  subscriptionStatus: subscriptionStatusEnum('subscription_status')
-    .notNull()
-    .default('pending'),
-  modulePermissions: jsonb('module_permissions').$type<string[]>().default([]),
-  stripeCustomerId: varchar('stripe_customer_id', { length: 255 })
-    .unique()
-    .notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+export const organizationsTable = pgTable(
+  'organizations',
+  {
+    id: varchar('id', { length: 255 }).primaryKey(),
+    name: varchar('name', { length: 255 }).unique().notNull(),
+    subscriptionStatus: subscriptionStatusEnum('subscription_status')
+      .notNull()
+      .default('pending'),
+    modulePermissions: jsonb('module_permissions')
+      .$type<string[]>()
+      .default([]),
+    stripeCustomerId: varchar('stripe_customer_id', { length: 255 })
+      .unique()
+      .notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    index('organizationsTable__name_idx').on(t.name),
+    index('organizationsTable__subscription_status_idx').on(
+      t.subscriptionStatus,
+    ),
+    index('organizationsTable__stripe_customer_id_idx').on(t.stripeCustomerId),
+    index('organizationsTable__created_at_idx').on(t.createdAt),
+  ],
+);
 
 // Tabela de Usuários (cópia local dos dados do Clerk)
-export const usersTable = pgTable('users', {
-  id: varchar('id', { length: 255 }).primaryKey(),
-  name: varchar('name', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).unique().notNull(),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
-});
+export const usersTable = pgTable(
+  'users',
+  {
+    id: varchar('id', { length: 255 }).primaryKey(),
+    name: varchar('name', { length: 255 }).notNull(),
+    email: varchar('email', { length: 255 }).unique().notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    deletedAt: timestamp('deleted_at'),
+  },
+  (t) => [
+    index('usersTable__email_idx').on(t.email),
+    index('usersTable__created_at_idx').on(t.createdAt),
+    index('usersTable__deleted_at_idx').on(t.deletedAt),
+  ],
+);
 
 // Tabela de Associações de Membros
 export const memberAssociationsTable = pgTable(
@@ -65,13 +87,16 @@ export const memberAssociationsTable = pgTable(
     status: memberStatusEnum('status').notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
-  (t) => ({
+  (t) => [
     // Índices para otimizar buscas por usuário ou organização
-    userIdIndex: index('user_id_idx').on(t.userId),
-    organizationIdIndex: index('organization_id_idx').on(t.organizationId),
+    index('memberAssociationsTable__user_id_idx').on(t.userId),
+    index('memberAssociationsTable__organization_id_idx').on(t.organizationId),
     // Garante que cada usuário tenha apenas uma associação por organização
-    uniqueUserOrg: unique('unique_user_org').on(t.userId, t.organizationId),
-  }),
+    unique('memberAssociationsTable__unique_user_org').on(
+      t.userId,
+      t.organizationId,
+    ),
+  ],
 );
 
 // Definições de relacionamentos para otimizar as queries com o Drizzle

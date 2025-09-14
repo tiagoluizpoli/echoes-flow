@@ -1,5 +1,5 @@
 {
-  "id": "7b72ea16-4181-4529-9711-166ddcbac6ae",
+  "id": "9de592d0-b77e-47cd-b444-3fad8dbe0e15",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -50,8 +50,8 @@
         }
       },
       "indexes": {
-        "user_id_idx": {
-          "name": "user_id_idx",
+        "memberAssociationsTable__user_id_idx": {
+          "name": "memberAssociationsTable__user_id_idx",
           "columns": [
             {
               "expression": "user_id",
@@ -65,8 +65,8 @@
           "method": "btree",
           "with": {}
         },
-        "organization_id_idx": {
-          "name": "organization_id_idx",
+        "memberAssociationsTable__organization_id_idx": {
+          "name": "memberAssociationsTable__organization_id_idx",
           "columns": [
             {
               "expression": "organization_id",
@@ -86,8 +86,12 @@
           "name": "member_associations_user_id_users_id_fk",
           "tableFrom": "member_associations",
           "tableTo": "users",
-          "columnsFrom": ["user_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -95,18 +99,25 @@
           "name": "member_associations_organization_id_organizations_id_fk",
           "tableFrom": "member_associations",
           "tableTo": "organizations",
-          "columnsFrom": ["organization_id"],
-          "columnsTo": ["id"],
+          "columnsFrom": [
+            "organization_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "unique_user_org": {
-          "name": "unique_user_org",
+        "memberAssociationsTable__unique_user_org": {
+          "name": "memberAssociationsTable__unique_user_org",
           "nullsNotDistinct": false,
-          "columns": ["user_id", "organization_id"]
+          "columns": [
+            "user_id",
+            "organization_id"
+          ]
         }
       },
       "policies": {},
@@ -158,14 +169,84 @@
           "default": "now()"
         }
       },
-      "indexes": {},
+      "indexes": {
+        "organizationsTable__name_idx": {
+          "name": "organizationsTable__name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "organizationsTable__subscription_status_idx": {
+          "name": "organizationsTable__subscription_status_idx",
+          "columns": [
+            {
+              "expression": "subscription_status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "organizationsTable__stripe_customer_id_idx": {
+          "name": "organizationsTable__stripe_customer_id_idx",
+          "columns": [
+            {
+              "expression": "stripe_customer_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "organizationsTable__created_at_idx": {
+          "name": "organizationsTable__created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "organizations_name_unique": {
+          "name": "organizations_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        },
         "organizations_stripe_customer_id_unique": {
           "name": "organizations_stripe_customer_id_unique",
           "nullsNotDistinct": false,
-          "columns": ["stripe_customer_id"]
+          "columns": [
+            "stripe_customer_id"
+          ]
         }
       },
       "policies": {},
@@ -200,16 +281,70 @@
           "primaryKey": false,
           "notNull": true,
           "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         }
       },
-      "indexes": {},
+      "indexes": {
+        "usersTable__email_idx": {
+          "name": "usersTable__email_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "usersTable__created_at_idx": {
+          "name": "usersTable__created_at_idx",
+          "columns": [
+            {
+              "expression": "created_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "usersTable__deleted_at_idx": {
+          "name": "usersTable__deleted_at_idx",
+          "columns": [
+            {
+              "expression": "deleted_at",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": ["email"]
+          "columns": [
+            "email"
+          ]
         }
       },
       "policies": {},
@@ -221,17 +356,29 @@
     "public.member_role": {
       "name": "member_role",
       "schema": "public",
-      "values": ["admin", "leader", "member"]
+      "values": [
+        "admin",
+        "leader",
+        "member"
+      ]
     },
     "public.member_status": {
       "name": "member_status",
       "schema": "public",
-      "values": ["pending", "active"]
+      "values": [
+        "pending",
+        "active"
+      ]
     },
     "public.subscription_status": {
       "name": "subscription_status",
       "schema": "public",
-      "values": ["pending", "active", "paused", "ended"]
+      "values": [
+        "pending",
+        "active",
+        "paused",
+        "ended"
+      ]
     }
   },
   "schemas": {},

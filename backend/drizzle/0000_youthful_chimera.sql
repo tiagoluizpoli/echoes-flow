@@ -8,7 +8,7 @@ CREATE TABLE "member_associations" (
 	"role" "member_role" NOT NULL,
 	"status" "member_status" NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
-	CONSTRAINT "unique_user_org" UNIQUE("user_id","organization_id")
+	CONSTRAINT "memberAssociationsTable__unique_user_org" UNIQUE("user_id","organization_id")
 );
 --> statement-breakpoint
 CREATE TABLE "organizations" (
@@ -18,6 +18,7 @@ CREATE TABLE "organizations" (
 	"module_permissions" jsonb DEFAULT '[]'::jsonb,
 	"stripe_customer_id" varchar(255) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "organizations_name_unique" UNIQUE("name"),
 	CONSTRAINT "organizations_stripe_customer_id_unique" UNIQUE("stripe_customer_id")
 );
 --> statement-breakpoint
@@ -26,10 +27,18 @@ CREATE TABLE "users" (
 	"name" varchar(255) NOT NULL,
 	"email" varchar(255) NOT NULL,
 	"created_at" timestamp DEFAULT now() NOT NULL,
+	"deleted_at" timestamp,
 	CONSTRAINT "users_email_unique" UNIQUE("email")
 );
 --> statement-breakpoint
 ALTER TABLE "member_associations" ADD CONSTRAINT "member_associations_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "member_associations" ADD CONSTRAINT "member_associations_organization_id_organizations_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."organizations"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-CREATE INDEX "user_id_idx" ON "member_associations" USING btree ("user_id");--> statement-breakpoint
-CREATE INDEX "organization_id_idx" ON "member_associations" USING btree ("organization_id");
+CREATE INDEX "memberAssociationsTable__user_id_idx" ON "member_associations" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX "memberAssociationsTable__organization_id_idx" ON "member_associations" USING btree ("organization_id");--> statement-breakpoint
+CREATE INDEX "organizationsTable__name_idx" ON "organizations" USING btree ("name");--> statement-breakpoint
+CREATE INDEX "organizationsTable__subscription_status_idx" ON "organizations" USING btree ("subscription_status");--> statement-breakpoint
+CREATE INDEX "organizationsTable__stripe_customer_id_idx" ON "organizations" USING btree ("stripe_customer_id");--> statement-breakpoint
+CREATE INDEX "organizationsTable__created_at_idx" ON "organizations" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "usersTable__email_idx" ON "users" USING btree ("email");--> statement-breakpoint
+CREATE INDEX "usersTable__created_at_idx" ON "users" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX "usersTable__deleted_at_idx" ON "users" USING btree ("deleted_at");
