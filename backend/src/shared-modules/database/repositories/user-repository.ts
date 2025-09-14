@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { eq } from 'drizzle-orm';
+import { and, eq, isNull } from 'drizzle-orm';
 import { User } from 'src/shared-modules/core';
 import { db, usersTable } from '../drizzle-setup';
 
@@ -7,7 +7,7 @@ import { db, usersTable } from '../drizzle-setup';
 export class UserRepository {
   async getUserById(id: string): Promise<User | undefined> {
     const userResult = await db.query.usersTable.findFirst({
-      where: eq(usersTable.id, id),
+      where: and(eq(usersTable.id, id), isNull(usersTable.deletedAt)),
     });
 
     if (!userResult) return undefined;
