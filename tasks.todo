@@ -1,0 +1,53 @@
+Modules:
+    Auth:
+        ✔ Criar o endpoint de webhook `/webhooks/clerk` (POST) @done(25-09-14 20:10)
+        ✔ Adicionar o `express.json({ verify: (req, res, buf) => { req.rawBody = buf; } })` para capturar o body cru @done(25-09-14 20:10)
+        ✔ Implementar a verificação da assinatura do webhook usando a biblioteca `svix` @done(25-09-14 20:10)
+        ✔ Configurar a chave secreta do webhook (`CLERK_WEBHOOK_SECRET`) no `.env` @done(25-09-14 20:10)
+        ✔ Implementar a lógica de sincronização para o evento `user.created` @done(25-09-14 20:10)
+        ✔ Implementar a lógica de sincronização para o evento `user.updated` @done(25-09-14 20:11)
+        ✔ Adicionar a lógica de soft delete para o evento `user.deleted` @done(25-09-14 20:11)
+        ✔ Implementar o `ClerkGuard` para proteger rotas autenticadas @done(25-09-14 20:12)
+        ✔ Implementar o `RolesGuard` para controle de acesso por role @done(25-09-14 21:58)
+        ☐ Implementar o `SubscriptionStatusGuard` para checar o status de pagamento
+        ✔ Instalar a biblioteca `svix` @done(25-09-14 20:12)
+
+    Database:
+        ✔ Criar o schema `users` com a coluna `deletedAt` @done(25-09-14 20:10)
+        ✔ Criar o schema `organizations` @done(25-09-14 20:10)
+        ✔ Criar o schema `events` @done(25-09-14 20:10)
+        ✔ Criar o schema `finances` @done(25-09-14 20:10)
+        ✔ Implementar o `UsersRepository` com a lógica de soft delete (`WHERE deletedAt IS NULL`) @done(25-09-14 20:10)
+        ☐ Implementar o `OrganizationsRepository`
+        ☐ Implementar o `EventsRepository`
+        ☐ Implementar o `FinancesRepository`
+        ✔ Configurar a conexão com o PostgreSQL via Drizzle ORM @done(25-09-14 20:10)
+
+    Organizations:
+        ☐ Criar o `OrganizationsController`
+        ☐ Criar o `OrganizationsService` para a lógica de negócio
+        ☐ Criar a rota `POST /organizations` para criação de nova organização
+        ☐ Proteger a rota `POST /organizations` com os guards de autenticação e permissão
+        ☐ Implementar a lógica de Stripe para criar a organização com status `pending`
+        ☐ Criar a rota `POST /organizations/invite` para convidar novos membros
+        ☐ Implementar o webhook do Stripe para ativar a organização após a confirmação do pagamento
+        ☐ Criar o schema Zod para validação da rota de criação de organização
+        ☐ Criar o schema Zod para validação da rota de convite de membro
+
+    Events:
+        ☐ Criar o `EventsController`
+        ☐ Criar o `EventsService`
+        ☐ Criar a rota `POST /events` para criação de evento
+        ☐ Criar a rota `PUT /events/:id` para edição de evento
+        ☐ Criar a rota `GET /events` para visualização de eventos
+        ☐ Proteger todas as rotas de evento com os guards necessários
+        ☐ Implementar a lógica de `multi-tenancy` para filtrar eventos por `organizationId`
+        ☐ Criar os schemas Zod para validação das rotas de eventos
+
+    Finances:
+        ☐ Criar o `FinancesController`
+        ☐ Criar o `FinancesService`
+        ☐ Criar as rotas para gerenciamento de dízimos e ofertas
+        ☐ Proteger as rotas de finanças com os guards necessários
+        ☐ Implementar a lógica de `multi-tenancy` para filtrar dados financeiros por `organizationId`
+        ☐ Criar os schemas Zod para validação das rotas de finanças

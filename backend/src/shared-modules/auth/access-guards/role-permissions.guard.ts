@@ -4,12 +4,12 @@ import {
   type CanActivate,
   type ExecutionContext,
   Injectable,
+  UnauthorizedException,
 } from '@nestjs/common';
 import type { Reflector } from '@nestjs/core';
-// import type { DatabaseService } from '../../database/database.service';
+import { Request } from 'express';
+import { MemberAssociationsRepository } from 'src/shared-modules/database';
 import { PERMISSIONS_KEY } from '../decorators';
-
-// import type { ClerkService } from './clerk.service';
 
 // Mapeamento de roles para permissões
 const ROLE_PERMISSIONS_MAP: { [key: string]: string[] } = {
@@ -24,12 +24,20 @@ const ROLE_PERMISSIONS_MAP: { [key: string]: string[] } = {
   member: ['events:view'],
 };
 
+interface ClerkUser {
+  id: string;
+}
+
+interface RequestWithAuth extends Request {
+  clerkUser: ClerkUser;
+  orgId: string;
+}
+
 @Injectable()
 export class RolePermissionsGuard implements CanActivate {
   constructor(
     private reflector: Reflector,
-    // private readonly dbService: DatabaseService,
-    // private readonly clerkService: ClerkService,
+    private readonly memberAssociationsRepository: MemberAssociationsRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -42,30 +50,34 @@ export class RolePermissionsGuard implements CanActivate {
       return true;
     }
 
-    const { clerkUser, orgId } = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<RequestWithAuth>();
+    const { clerkUser, orgId } = request;
 
-    // 1. Obtém a role do usuário na organização
-    // const memberAssociation = await this.dbService.getMemberAssociation(
-    //   clerkUser.id,
-    //   orgId,
-    // );
-    // if (!memberAssociation) {
-    //   throw new ForbiddenException('Usuário não é membro da organização.');
-    // }
+    // 1. Obtém a associação de membro para pegar a role
+    const memberAssociation =
+      await this.memberAssociationsRepository.findByUserIdAndOrgId(
+        clerkUser.id,
+        orgId,
+      );
 
-    // const userRole = memberAssociation.role;
-    // const userPermissions = ROLE_PERMISSIONS_MAP[userRole] || [];
+    // Se o usuário não for um membro da organização, nega o acesso
+    if (!memberAssociation) {
+      throw new UnauthorizedException('Usuário não é membro da organização.');
+    }
 
-    // 2. Verifica se a role do usuário concede a permissão
-    // const hasPermission = requiredPermissions.every((permission) =>
-    //   userPermissions.includes(permission),
-    // );
+    const userRole = memberAssociation.role;
+    const userPermissions = ROLE_PERMISSIONS_MAP[userRole] || [];
 
-    // if (!hasPermission) {
-    //   throw new ForbiddenException(
-    //     'Permissão insuficiente para realizar esta ação.',
-    //   );
-    // }
+    // 2. Verifica se a role do usuário concede todas as permissões necessárias
+    const hasPermission = requiredPermissions.every((permission) =>
+      userPermissions.includes(permission),
+    );
+
+    if (!hasPermission) {
+      throw new UnauthorizedException(
+        'Permissão insuficiente para realizar esta ação.',
+      );
+    }
 
     return true;
   }

@@ -1,2 +1,3 @@
-export * from './access-guards/clerk.guard';
+export * from './access-guards';
 export * from './auth.module';
+export * from './decorators';

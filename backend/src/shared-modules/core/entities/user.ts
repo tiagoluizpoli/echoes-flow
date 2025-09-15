@@ -4,6 +4,7 @@ interface UserProps {
   name: string;
   email: string;
   createdAt?: Date;
+  deletedAt?: Date;
 }
 
 export class User extends Entity<UserProps> {
@@ -21,6 +22,10 @@ export class User extends Entity<UserProps> {
 
   get createdAt(): Date | undefined {
     return this.props.createdAt;
+  }
+
+  get deletedAt(): Date | undefined {
+    return this.props.deletedAt;
   }
 
   static create(props: UserProps, id: string) {
