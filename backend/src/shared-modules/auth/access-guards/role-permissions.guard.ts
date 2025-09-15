@@ -24,15 +24,6 @@ const ROLE_PERMISSIONS_MAP: { [key: string]: string[] } = {
   member: ['events:view'],
 };
 
-interface ClerkUser {
-  id: string;
-}
-
-interface RequestWithAuth extends Request {
-  clerkUser: ClerkUser;
-  orgId: string;
-}
-
 @Injectable()
 export class RolePermissionsGuard implements CanActivate {
   constructor(
@@ -50,14 +41,16 @@ export class RolePermissionsGuard implements CanActivate {
       return true;
     }
 
-    const request = context.switchToHttp().getRequest<RequestWithAuth>();
-    const { clerkUser, orgId } = request;
+    const request = context.switchToHttp().getRequest<Request>();
+    const { user } = request;
+
+    if (!user) throw new UnauthorizedException();
 
     // 1. Obtém a associação de membro para pegar a role
     const memberAssociation =
       await this.memberAssociationsRepository.findByUserIdAndOrgId(
-        clerkUser.id,
-        orgId,
+        user.sub,
+        user.org_id ?? '',
       );
 
     // Se o usuário não for um membro da organização, nega o acesso

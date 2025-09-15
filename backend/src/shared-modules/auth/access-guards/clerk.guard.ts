@@ -1,4 +1,4 @@
-import { clerkClient } from '@clerk/clerk-sdk-node';
+import { clerkClient } from '@clerk/clerk-sdk-node'; // Importe a tipagem
 import {
   type CanActivate,
   type ExecutionContext,
@@ -24,7 +24,14 @@ export class ClerkGuard implements CanActivate {
     try {
       const payload = await clerkClient.verifyToken(token);
 
+      payload.org_id;
+
+      console.log({
+        payload,
+      });
+
       request.user = payload;
+
       return true;
     } catch (_) {
       return false;
