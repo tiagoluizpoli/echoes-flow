@@ -9,7 +9,7 @@ Modules:
         ✔ Adicionar a lógica de soft delete para o evento `user.deleted` @done(25-09-14 20:11)
         ✔ Implementar o `ClerkGuard` para proteger rotas autenticadas @done(25-09-14 20:12)
         ✔ Implementar o `RolesGuard` para controle de acesso por role @done(25-09-14 21:58)
-        ☐ Implementar o `SubscriptionStatusGuard` para checar o status de pagamento
+        ✔ Implementar o `SubscriptionStatusGuard` para checar o status de pagamento @done(25-09-15 22:15)
         ✔ Instalar a biblioteca `svix` @done(25-09-14 20:12)
 
     Database:
