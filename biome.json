@@ -8,7 +8,7 @@
     "ignoreUnknown": false,
     "includes": [
       "**",
-      "!src/components/ui",
+      "!frontend/src/components/ui",
       "!src/route-tree.gen.ts",
       "!backend/dist"
     ]
