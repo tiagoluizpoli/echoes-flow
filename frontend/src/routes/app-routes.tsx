@@ -1,5 +1,6 @@
 // src/AppRoutes.tsx
 import { createBrowserRouter } from 'react-router-dom';
+import { DashboardPage, EventsPage } from '@/pages';
 
 // Páginas e componentes de rotas
 import SignInPage from '@/pages/signin-page';
@@ -10,10 +11,6 @@ export const router = createBrowserRouter([
   {
     path: '/',
     element: <div>Main page</div>,
-  },
-  {
-    path: '/landing-page',
-    element: <div>Landing Page</div>,
   },
   {
     element: <PublicOnlyRoute />,
@@ -29,11 +26,11 @@ export const router = createBrowserRouter([
     children: [
       {
         path: '/dashboard',
-        element: <div>Dashboard</div>,
+        element: <DashboardPage />,
       },
       {
         path: '/events',
-        element: <div>Events</div>,
+        element: <EventsPage />,
       },
     ],
   },
