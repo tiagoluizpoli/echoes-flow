@@ -40,12 +40,15 @@ export const AppSidebar = () => {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:!p-1.5"
+              className="data-[slot=sidebar-menu-button]:!p-2"
             >
-              <Link to="/dashboard" className="flex items-center gap-2">
-                <Icon icon={'et:clock'} className="!size-5" />
+              <Link
+                to="/dashboard"
+                className="flex items-center flex-col gap-2 h-28"
+              >
+                <Icon icon={'arcticons:godsdjsradio'} className="!size-16" />
 
-                <span className="text-base font-semibold">CBDG Timer</span>
+                <span className="text-base font-semibold">Echoes Flow</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
