@@ -1,9 +1,10 @@
+import { UserButton, useUser } from '@clerk/clerk-react';
 import { Icon } from '@iconify/react';
 import { Link, type LinkProps } from 'react-router-dom';
-
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -20,6 +21,8 @@ interface MenuItem {
 }
 
 export const AppSidebar = () => {
+  const { user } = useUser();
+
   const menuItems: MenuItem[] = [
     {
       icon: 'basil:clock-outline',
@@ -42,10 +45,7 @@ export const AppSidebar = () => {
               asChild
               className="data-[slot=sidebar-menu-button]:!p-2"
             >
-              <Link
-                to="/dashboard"
-                className="flex items-center flex-col gap-2 h-28"
-              >
+              <Link to="/" className="flex items-center flex-col gap-2 h-28">
                 <Icon icon={'arcticons:godsdjsradio'} className="!size-16" />
 
                 <span className="text-base font-semibold">Echoes Flow</span>
@@ -74,11 +74,17 @@ export const AppSidebar = () => {
         </SidebarGroup>
       </SidebarContent>
 
-      {/* <SidebarFooter>
+      <SidebarFooter>
         <div className="p-1">
-          <ModeToggle />
+          <div className="flex items-center gap-2">
+            <UserButton />
+            <div>
+              <p className="font-semibold">{user?.fullName}</p>
+              <p className="text-xs">{user?.emailAddresses[0].emailAddress}</p>
+            </div>
+          </div>
         </div>
-      </SidebarFooter> */}
+      </SidebarFooter>
     </Sidebar>
   );
 };

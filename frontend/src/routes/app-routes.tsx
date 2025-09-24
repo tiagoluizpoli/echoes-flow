@@ -1,6 +1,6 @@
 // src/AppRoutes.tsx
 import { createBrowserRouter } from 'react-router-dom';
-import { DashboardPage, EventsPage } from '@/pages';
+import { DashboardPage, EventsPage, MainPage } from '@/pages';
 
 // Páginas e componentes de rotas
 import SignInPage from '@/pages/signin-page';
@@ -10,7 +10,7 @@ import { PublicOnlyRoute } from './public-route';
 export const router = createBrowserRouter([
   {
     path: '/',
-    element: <div>Main page</div>,
+    element: <MainPage />,
   },
   {
     element: <PublicOnlyRoute />,

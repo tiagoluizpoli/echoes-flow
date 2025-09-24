@@ -1,4 +1,5 @@
 import { ClerkProvider } from '@clerk/clerk-react';
+import { shadcn } from '@clerk/themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -12,7 +13,12 @@ export const Providers = () => {
 
   return (
     <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <ClerkProvider publishableKey={VITE_CLERK_PUBLISHABLE_KEY}>
+      <ClerkProvider
+        publishableKey={VITE_CLERK_PUBLISHABLE_KEY}
+        appearance={{
+          theme: shadcn,
+        }}
+      >
         <QueryClientProvider client={queryClient}>
           <SidebarProvider>
             <RouterProvider router={router} />

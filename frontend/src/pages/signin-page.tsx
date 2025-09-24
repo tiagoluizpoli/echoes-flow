@@ -3,8 +3,11 @@ import { SignIn } from '@clerk/clerk-react';
 
 const SignInPage = () => {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <SignIn path="/sign-in" routing="path" />
+    <div className="flex min-h-screen items-center justify-center w-full">
+      <SignIn
+        signUpForceRedirectUrl={'/dashboard'}
+        forceRedirectUrl={'/dashboard'}
+      />
     </div>
   );
 };
