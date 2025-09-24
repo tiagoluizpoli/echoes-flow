@@ -24,15 +24,20 @@ Modules:
         ✔ Configurar a conexão com o PostgreSQL via Drizzle ORM @done(25-09-14 20:10)
 
     Organizations:
-        ☐ Criar o `OrganizationsController`
-        ☐ Criar o `OrganizationsService` para a lógica de negócio
-        ☐ Criar a rota `POST /organizations` para criação de nova organização
-        ☐ Proteger a rota `POST /organizations` com os guards de autenticação e permissão
-        ☐ Implementar a lógica de Stripe para criar a organização com status `pending`
-        ☐ Criar a rota `POST /organizations/invite` para convidar novos membros
-        ☐ Implementar o webhook do Stripe para ativar a organização após a confirmação do pagamento
-        ☐ Criar o schema Zod para validação da rota de criação de organização
-        ☐ Criar o schema Zod para validação da rota de convite de membro
+        Frontend:
+            ☐ Criar tela inicial de usuário avulso (Sem organização)
+                - Essa tela deve permitir ao usuário criar uma nova organização
+            ☐ Criar camada de infra para chamar a rota de criação da organização
+        Backend:
+            ☐ Criar o `OrganizationsController`
+            ☐ Criar o `OrganizationsService` para a lógica de negócio
+            ☐ Criar a rota `POST /organizations` para criação de nova organização
+            ☐ Proteger a rota `POST /organizations` com os guards de autenticação e permissão
+            ☐ Implementar a lógica de Stripe para criar a organização com status `pending`
+            ☐ Criar a rota `POST /organizations/invite` para convidar novos membros
+            ☐ Implementar o webhook do Stripe para ativar a organização após a confirmação do pagamento
+            ☐ Criar o schema Zod para validação da rota de criação de organização
+            ☐ Criar o schema Zod para validação da rota de convite de membro
 
     Events:
         ☐ Criar o `EventsController`
