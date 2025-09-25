@@ -2,6 +2,7 @@ import { ClerkProvider } from '@clerk/clerk-react';
 import { shadcn } from '@clerk/themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
+import { Toaster } from 'sonner';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import { env } from '@/config';
 import { router } from '@/routes';
@@ -25,6 +26,7 @@ export const Providers = () => {
           </SidebarProvider>
         </QueryClientProvider>
       </ClerkProvider>
+      <Toaster />
     </ThemeProvider>
   );
 };
