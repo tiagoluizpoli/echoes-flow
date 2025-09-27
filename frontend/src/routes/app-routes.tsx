@@ -4,6 +4,7 @@ import {
   DashboardPage,
   EventsPage,
   MainPage,
+  OnboardingCompletedPage,
   OnboardingPage,
 } from '@/features';
 
@@ -32,6 +33,12 @@ export const router = createBrowserRouter([
       {
         path: '/onboarding',
         element: <OnboardingPage />,
+        children: [
+          {
+            path: 'completed',
+            element: <OnboardingCompletedPage />,
+          },
+        ],
       },
       {
         path: '/dashboard',

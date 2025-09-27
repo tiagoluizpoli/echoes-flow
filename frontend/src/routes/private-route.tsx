@@ -21,7 +21,7 @@ export const PrivateRoute = () => {
     return (
       <>
         <Outlet />
-        <Navigate to={'/onboarding'} />
+        <Navigate to={'/onboarding/completed'} />
       </>
     );
   }

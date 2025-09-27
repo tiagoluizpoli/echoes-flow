@@ -26,6 +26,7 @@ export const memberRoleEnum = pgEnum('member_role', [
 ]);
 export const memberStatusEnum = pgEnum('member_status', ['pending', 'active']);
 
+export const contactTypeEnum = pgEnum('contact_type', ['phone', 'email']);
 // --- Tables ---
 
 // Tabela de Organizações
@@ -33,7 +34,9 @@ export const organizationsTable = pgTable(
   'organizations',
   {
     id: varchar('id', { length: 255 }).primaryKey(),
-    name: varchar('name', { length: 255 }).unique().notNull(),
+    organizationName: varchar('name', { length: 255 }).unique().notNull(),
+    publicName: varchar('public_name', { length: 255 }).unique().notNull(),
+    cnpj: varchar('cnpj', { length: 255 }).unique().notNull(),
     subscriptionStatus: subscriptionStatusEnum('subscription_status')
       .notNull()
       .default('pending'),
@@ -46,13 +49,25 @@ export const organizationsTable = pgTable(
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
   (t) => [
-    index('organizationsTable__name_idx').on(t.name),
+    index('organizationsTable__name_idx').on(t.organizationName),
     index('organizationsTable__subscription_status_idx').on(
       t.subscriptionStatus,
     ),
     index('organizationsTable__stripe_customer_id_idx').on(t.stripeCustomerId),
     index('organizationsTable__created_at_idx').on(t.createdAt),
   ],
+);
+
+export const organizatgionContactInfoTable = pgTable(
+  'organization_contact_info',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    organizationId: varchar('organization_id', { length: 255 }),
+    type: contactTypeEnum('type').notNull(),
+    value: varchar('value', { length: 255 }).notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    lastUpdatedAt: timestamp('last_updated_at').notNull(),
+  },
 );
 
 // Tabela de Usuários (cópia local dos dados do Clerk)
