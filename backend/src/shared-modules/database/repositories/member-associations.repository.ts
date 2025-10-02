@@ -16,19 +16,19 @@ export class MemberAssociationsRepository {
         },
         where: and(
           eq(memberAssociationsTable.userId, uId),
-          eq(memberAssociationsTable.organizationId, orgId),
+          eq(memberAssociationsTable.churchId, orgId),
         ),
       });
 
     if (!memberAssociationsResult) return undefined;
 
-    const { id, userId, organizationId, role, status, createdAt, user } =
+    const { id, userId, churchId, role, status, createdAt, user } =
       memberAssociationsResult;
 
     return MemberAssociation.create(
       {
         userId,
-        organizationId,
+        churchId,
         role,
         status,
         createdAt,

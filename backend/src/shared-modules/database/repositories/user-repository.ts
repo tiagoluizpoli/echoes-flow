@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { and, eq, isNull } from 'drizzle-orm';
 import { User } from 'src/shared-modules/core';
-import { db, usersTable } from '../drizzle-setup';
+import { db, userTable } from '../drizzle-setup';
 
 @Injectable()
 export class UserRepository {
   async getUserById(id: string): Promise<User | undefined> {
     const userResult = await db.query.usersTable.findFirst({
-      where: and(eq(usersTable.id, id), isNull(usersTable.deletedAt)),
+      where: and(eq(userTable.id, id), isNull(userTable.deletedAt)),
     });
 
     if (!userResult) return undefined;
@@ -24,7 +24,7 @@ export class UserRepository {
 
   async createUser(user: User) {
     await db
-      .insert(usersTable)
+      .insert(userTable)
       .values({
         id: user.id,
         name: user.name,
@@ -36,20 +36,20 @@ export class UserRepository {
 
   async updateUser(user: User) {
     await db
-      .update(usersTable)
+      .update(userTable)
       .set({
         name: user.name,
         email: user.email,
       })
-      .where(eq(usersTable.id, user.id))
+      .where(eq(userTable.id, user.id))
       .execute();
   }
 
   async deleteUser(id: string) {
     await db
-      .update(usersTable)
+      .update(userTable)
       .set({ deletedAt: new Date() })
-      .where(eq(usersTable.id, id))
+      .where(eq(userTable.id, id))
       .execute();
   }
 }
