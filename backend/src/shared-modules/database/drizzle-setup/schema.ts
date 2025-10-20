@@ -10,6 +10,7 @@ import {
   uuid,
   varchar,
 } from 'drizzle-orm/pg-core';
+import { memberStatuses } from 'src/shared-modules/core';
 // --- Default sizes ---
 
 // --- Enums ---
@@ -20,12 +21,8 @@ export const subscriptionStatusEnum = pgEnum('subscription_status', [
   'paused',
   'ended',
 ]);
-export const memberRoleEnum = pgEnum('member_role', [
-  'admin',
-  'leader',
-  'member',
-]);
-export const memberStatusEnum = pgEnum('member_status', ['pending', 'active']);
+
+export const memberStatusEnum = pgEnum('member_status', memberStatuses);
 
 export const contactTypeEnum = pgEnum('contact_type', ['phone', 'email']);
 // --- Tables ---
@@ -34,27 +31,28 @@ export const contactTypeEnum = pgEnum('contact_type', ['phone', 'email']);
 export const churchTable = pgTable(
   'church',
   {
-    id: varchar('id', { length: 255 }).primaryKey(),
+    id: uuid('id').primaryKey().defaultRandom(),
+    slug: varchar('slug', { length: 255 }).unique().notNull(),
     businessName: varchar('name', { length: 255 }).unique().notNull(),
     publicName: varchar('public_name', { length: 255 }).unique().notNull(),
     cnpj: varchar('cnpj', { length: 255 }).unique().notNull(),
-    subscriptionStatus: subscriptionStatusEnum('subscription_status')
-      .notNull()
-      .default('pending'),
+    description: varchar('description', { length: 255 }),
     modulePermissions: jsonb('module_permissions')
       .$type<string[]>()
       .default([]),
-    stripeCustomerId: varchar('stripe_customer_id', { length: 255 })
-      .unique()
-      .notNull(),
+    subscriptionStatus: subscriptionStatusEnum('subscription_status')
+      .notNull()
+      .default('pending'),
+    paymentGatewayCustomerId: varchar('payment_gateway_customer_id', {
+      length: 255,
+    }).unique(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
   },
   (t) => [
-    index('churchTable__name_idx').on(t.businessName),
-    index('churchTable__public_name_idx').on(t.publicName),
-    index('churchTable__cnpj_idx').on(t.cnpj),
     index('churchTable__subscription_status_idx').on(t.subscriptionStatus),
-    index('churchTable__stripe_customer_id_idx').on(t.stripeCustomerId),
+    index('churchTable__payment_gateway_customer_id_idx').on(
+      t.paymentGatewayCustomerId,
+    ),
     index('churchTable__created_at_idx').on(t.createdAt),
   ],
 );
@@ -63,91 +61,19 @@ export const churchContactInfoTable = pgTable(
   'church_contact_info',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    chruchId: varchar('church_id', { length: 255 }).references(
-      () => churchTable.id,
-      { onDelete: 'cascade' },
-    ),
+    churchId: uuid('church_id')
+      .notNull()
+      .references(() => churchTable.id, { onDelete: 'cascade' }),
     type: contactTypeEnum('type').notNull(),
     maskRegex: varchar('mask_regex', { length: 255 }).notNull(),
     value: varchar('value', { length: 255 }).notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
-    lastUpdatedAt: timestamp('last_updated_at').notNull(),
+    lastUpdatedAt: timestamp('last_updated_at'),
   },
   (t) => [
-    index('churchContactInfoTable__church_id_idx').on(t.chruchId),
+    index('churchContactInfoTable__church_id_idx').on(t.churchId),
     index('churchContactInfoTable__type_idx').on(t.type),
     index('churchContactInfoTable__value_idx').on(t.value),
-  ],
-);
-
-// Tabela de Usuários (cópia local dos dados do Clerk)
-export const userTable = pgTable(
-  'users',
-  {
-    id: varchar('id', { length: 255 }).primaryKey(),
-    churchId: varchar('church_id', { length: 255 }).references(
-      () => churchTable.id,
-      { onDelete: 'cascade' },
-    ),
-    name: varchar('name', { length: 255 }).notNull(),
-    email: varchar('email', { length: 255 }).unique().notNull(),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-    deletedAt: timestamp('deleted_at'),
-  },
-  (t) => [
-    index('usersTable__church_id_idx').on(t.churchId),
-    index('usersTable__email_idx').on(t.email),
-    index('usersTable__created_at_idx').on(t.createdAt),
-    index('usersTable__deleted_at_idx').on(t.deletedAt),
-  ],
-);
-
-export const pastorAssociationsTable = pgTable(
-  'pastor_associations',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    userId: varchar('user_id', { length: 255 })
-      .notNull()
-      .references(() => userTable.id, { onDelete: 'cascade' }),
-    churchId: varchar('church_id', { length: 255 })
-      .notNull()
-      .references(() => churchTable.id, { onDelete: 'cascade' }),
-    main: boolean('main').notNull().default(false),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-  },
-  (t) => [
-    index('pastorAssociationsTable__user_id_idx').on(t.userId),
-    index('pastorAssociationsTable__church_id_idx').on(t.churchId),
-    unique('pastorAssociationsTable__unique_user_church').on(
-      t.userId,
-      t.churchId,
-    ),
-  ],
-);
-
-// Tabela de Associações de Membros
-export const memberAssociationsTable = pgTable(
-  'member_associations',
-  {
-    id: uuid('id').primaryKey().defaultRandom(),
-    userId: varchar('user_id', { length: 255 })
-      .notNull()
-      .references(() => userTable.id, { onDelete: 'cascade' }),
-    churchId: varchar('church_id', { length: 255 })
-      .notNull()
-      .references(() => churchTable.id, { onDelete: 'cascade' }),
-    role: memberRoleEnum('role').notNull(),
-    status: memberStatusEnum('status').notNull(),
-    createdAt: timestamp('created_at').notNull().defaultNow(),
-  },
-  (t) => [
-    // Índices para otimizar buscas por usuário ou organização
-    index('memberAssociationsTable__user_id_idx').on(t.userId),
-    index('memberAssociationsTable__church_id_idx').on(t.churchId),
-    index('memberAssociationsTable__role_idx').on(t.role),
-    index('memberAssociationsTable__status_idx').on(t.status),
-    // Garante que cada usuário tenha apenas uma associação por organização
-    unique('memberAssociationsTable__unique_user_org').on(t.userId, t.churchId),
   ],
 );
 
@@ -155,10 +81,10 @@ export const churchAddressTable = pgTable(
   'church_address',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    churchId: varchar('church_id', { length: 255 }).references(
-      () => churchTable.id,
-      { onDelete: 'cascade' },
-    ),
+    churchId: uuid('church_id')
+      .notNull()
+      .unique()
+      .references(() => churchTable.id, { onDelete: 'cascade' }),
     street: varchar('street', { length: 255 }).notNull(),
     number: varchar('number', { length: 255 }).notNull(),
     complement: varchar('complement', { length: 255 }),
@@ -167,7 +93,7 @@ export const churchAddressTable = pgTable(
     city: varchar('city', { length: 255 }).notNull(),
     zipCode: varchar('zip_code', { length: 8 }).notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
-    lastUpdatedAt: timestamp('last_updated_at').notNull(),
+    lastUpdatedAt: timestamp('last_updated_at'),
   },
   (t) => [
     index('churchAddressTable__church_id_idx').on(t.churchId),
@@ -179,6 +105,52 @@ export const churchAddressTable = pgTable(
     index('churchAddressTable__zip_code_idx').on(t.zipCode),
   ],
 );
+
+// Tabela de Usuários (cópia local dos dados do Clerk)
+export const userTable = pgTable(
+  'users',
+  {
+    id: varchar('id', { length: 255 }).primaryKey(),
+    name: varchar('name', { length: 255 }).notNull(),
+    email: varchar('email', { length: 255 }).unique().notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+    activatedAt: timestamp('activated_at'),
+    deletedAt: timestamp('deleted_at'),
+  },
+  (t) => [
+    index('usersTable__email_idx').on(t.email),
+    index('usersTable__created_at_idx').on(t.createdAt),
+    index('usersTable__deleted_at_idx').on(t.deletedAt),
+    unique('usersTable__email_deletedAt_unique').on(t.email, t.deletedAt),
+  ],
+);
+
+// Tabela de Associações de Membros
+export const memberAssociationsTable = pgTable(
+  'member_associations',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: varchar('user_id', { length: 255 })
+      .notNull()
+      .references(() => userTable.id, { onDelete: 'cascade' }),
+    churchId: uuid('church_id')
+      .notNull()
+      .references(() => churchTable.id, { onDelete: 'cascade' }),
+    owner: boolean('owner').notNull().default(false),
+    roles: jsonb('roles').$type<string[]>().notNull(),
+    status: memberStatusEnum('status').notNull(),
+    createdAt: timestamp('created_at').notNull().defaultNow(),
+  },
+  (t) => [
+    // Índices para otimizar buscas por usuário ou organização
+    index('memberAssociationsTable__user_id_idx').on(t.userId),
+    index('memberAssociationsTable__church_id_idx').on(t.churchId),
+    index('memberAssociationsTable__status_idx').on(t.status),
+    // Garante que cada usuário tenha apenas uma associação por organização
+    unique('memberAssociationsTable__unique_user_org').on(t.userId, t.churchId),
+  ],
+);
+
 // --- Relations ---
 
 // Definições de relacionamentos para otimizar as queries com o Drizzle
@@ -200,41 +172,23 @@ export const churchContactInfoRelations = relations(
   churchContactInfoTable,
   ({ one }) => ({
     church: one(churchTable, {
-      fields: [churchContactInfoTable.chruchId],
+      fields: [churchContactInfoTable.churchId],
       references: [churchTable.id],
     }),
   }),
 );
 
-export const usersRelations = relations(userTable, ({ one, many }) => ({
-  church: one(churchTable, {
-    fields: [userTable.churchId],
-    references: [churchTable.id],
-  }),
+export const usersRelations = relations(userTable, ({ many }) => ({
   memberAssociations: many(memberAssociationsTable),
-  pastorAssociations: many(pastorAssociationsTable),
 }));
 
-export const pastorAssociationsRelations = relations(
-  pastorAssociationsTable,
-  ({ one }) => ({
-    user: one(userTable, {
-      fields: [pastorAssociationsTable.userId],
-      references: [userTable.id],
-    }),
-    church: one(churchTable, {
-      fields: [pastorAssociationsTable.churchId],
-      references: [churchTable.id],
-    }),
-  }),
-);
-
-export const churchRelations = relations(churchTable, ({ many }) => ({
+export const churchRelations = relations(churchTable, ({ many, one }) => ({
   memberAssociations: many(memberAssociationsTable),
-  users: many(userTable),
-  pastorAssociations: many(pastorAssociationsTable),
   churchContactInfo: many(churchContactInfoTable),
-  churchAddress: many(churchAddressTable),
+  churchAddress: one(churchAddressTable, {
+    fields: [churchTable.id],
+    references: [churchAddressTable.churchId],
+  }),
 }));
 
 export const churchAddressRelations = relations(

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { MemberAssociationsRepository, UserRepository } from './repositories';
+import { ChurchRepository, UserRepository } from './repositories';
 
 @Module({
-  providers: [UserRepository, MemberAssociationsRepository],
-  exports: [UserRepository],
+  providers: [UserRepository, ChurchRepository],
+  exports: [UserRepository, ChurchRepository],
 })
 export class DatabaseModule {}

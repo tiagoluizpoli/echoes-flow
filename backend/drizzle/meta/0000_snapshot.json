@@ -1,5 +1,5 @@
 {
-  "id": "79ffd8df-7c89-48b2-979e-f43d759b39f8",
+  "id": "ed331fef-e1ae-4cf6-b116-fac718350fce",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -17,9 +17,9 @@
         },
         "church_id": {
           "name": "church_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "street": {
           "name": "street",
@@ -74,7 +74,7 @@
           "name": "last_updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -200,7 +200,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "church_address_church_id_unique": {
+          "name": "church_address_church_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "church_id"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
@@ -218,9 +226,9 @@
         },
         "church_id": {
           "name": "church_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "type": {
           "name": "type",
@@ -252,7 +260,7 @@
           "name": "last_updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {
@@ -329,8 +337,15 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar(255)",
+          "primaryKey": false,
           "notNull": true
         },
         "name": {
@@ -351,13 +366,11 @@
           "primaryKey": false,
           "notNull": true
         },
-        "subscription_status": {
-          "name": "subscription_status",
-          "type": "subscription_status",
-          "typeSchema": "public",
+        "description": {
+          "name": "description",
+          "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true,
-          "default": "'pending'"
+          "notNull": false
         },
         "module_permissions": {
           "name": "module_permissions",
@@ -366,11 +379,19 @@
           "notNull": false,
           "default": "'[]'::jsonb"
         },
-        "stripe_customer_id": {
-          "name": "stripe_customer_id",
+        "subscription_status": {
+          "name": "subscription_status",
+          "type": "subscription_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "payment_gateway_customer_id": {
+          "name": "payment_gateway_customer_id",
           "type": "varchar(255)",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "created_at": {
           "name": "created_at",
@@ -381,51 +402,6 @@
         }
       },
       "indexes": {
-        "churchTable__name_idx": {
-          "name": "churchTable__name_idx",
-          "columns": [
-            {
-              "expression": "name",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "churchTable__public_name_idx": {
-          "name": "churchTable__public_name_idx",
-          "columns": [
-            {
-              "expression": "public_name",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "churchTable__cnpj_idx": {
-          "name": "churchTable__cnpj_idx",
-          "columns": [
-            {
-              "expression": "cnpj",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "churchTable__subscription_status_idx": {
           "name": "churchTable__subscription_status_idx",
           "columns": [
@@ -441,11 +417,11 @@
           "method": "btree",
           "with": {}
         },
-        "churchTable__stripe_customer_id_idx": {
-          "name": "churchTable__stripe_customer_id_idx",
+        "churchTable__payment_gateway_customer_id_idx": {
+          "name": "churchTable__payment_gateway_customer_id_idx",
           "columns": [
             {
-              "expression": "stripe_customer_id",
+              "expression": "payment_gateway_customer_id",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -475,6 +451,13 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
+        "church_slug_unique": {
+          "name": "church_slug_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "slug"
+          ]
+        },
         "church_name_unique": {
           "name": "church_name_unique",
           "nullsNotDistinct": false,
@@ -496,11 +479,11 @@
             "cnpj"
           ]
         },
-        "church_stripe_customer_id_unique": {
-          "name": "church_stripe_customer_id_unique",
+        "church_payment_gateway_customer_id_unique": {
+          "name": "church_payment_gateway_customer_id_unique",
           "nullsNotDistinct": false,
           "columns": [
-            "stripe_customer_id"
+            "payment_gateway_customer_id"
           ]
         }
       },
@@ -527,14 +510,20 @@
         },
         "church_id": {
           "name": "church_id",
-          "type": "varchar(255)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "role": {
-          "name": "role",
-          "type": "member_role",
-          "typeSchema": "public",
+        "owner": {
+          "name": "owner",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "roles": {
+          "name": "roles",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": true
         },
@@ -574,21 +563,6 @@
           "columns": [
             {
               "expression": "church_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "memberAssociationsTable__role_idx": {
-          "name": "memberAssociationsTable__role_idx",
-          "columns": [
-            {
-              "expression": "role",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
@@ -658,119 +632,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.pastor_associations": {
-      "name": "pastor_associations",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "church_id": {
-          "name": "church_id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "main": {
-          "name": "main",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true,
-          "default": "now()"
-        }
-      },
-      "indexes": {
-        "pastorAssociationsTable__user_id_idx": {
-          "name": "pastorAssociationsTable__user_id_idx",
-          "columns": [
-            {
-              "expression": "user_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
-        "pastorAssociationsTable__church_id_idx": {
-          "name": "pastorAssociationsTable__church_id_idx",
-          "columns": [
-            {
-              "expression": "church_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        }
-      },
-      "foreignKeys": {
-        "pastor_associations_user_id_users_id_fk": {
-          "name": "pastor_associations_user_id_users_id_fk",
-          "tableFrom": "pastor_associations",
-          "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        },
-        "pastor_associations_church_id_church_id_fk": {
-          "name": "pastor_associations_church_id_church_id_fk",
-          "tableFrom": "pastor_associations",
-          "tableTo": "church",
-          "columnsFrom": [
-            "church_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "pastorAssociationsTable__unique_user_church": {
-          "name": "pastorAssociationsTable__unique_user_church",
-          "nullsNotDistinct": false,
-          "columns": [
-            "user_id",
-            "church_id"
-          ]
-        }
-      },
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.users": {
       "name": "users",
       "schema": "",
@@ -780,12 +641,6 @@
           "type": "varchar(255)",
           "primaryKey": true,
           "notNull": true
-        },
-        "church_id": {
-          "name": "church_id",
-          "type": "varchar(255)",
-          "primaryKey": false,
-          "notNull": false
         },
         "name": {
           "name": "name",
@@ -806,6 +661,12 @@
           "notNull": true,
           "default": "now()"
         },
+        "activated_at": {
+          "name": "activated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
         "deleted_at": {
           "name": "deleted_at",
           "type": "timestamp",
@@ -814,21 +675,6 @@
         }
       },
       "indexes": {
-        "usersTable__church_id_idx": {
-          "name": "usersTable__church_id_idx",
-          "columns": [
-            {
-              "expression": "church_id",
-              "isExpression": false,
-              "asc": true,
-              "nulls": "last"
-            }
-          ],
-          "isUnique": false,
-          "concurrently": false,
-          "method": "btree",
-          "with": {}
-        },
         "usersTable__email_idx": {
           "name": "usersTable__email_idx",
           "columns": [
@@ -875,21 +721,7 @@
           "with": {}
         }
       },
-      "foreignKeys": {
-        "users_church_id_church_id_fk": {
-          "name": "users_church_id_church_id_fk",
-          "tableFrom": "users",
-          "tableTo": "church",
-          "columnsFrom": [
-            "church_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "cascade",
-          "onUpdate": "no action"
-        }
-      },
+      "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_email_unique": {
@@ -897,6 +729,14 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
+          ]
+        },
+        "usersTable__email_deletedAt_unique": {
+          "name": "usersTable__email_deletedAt_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email",
+            "deleted_at"
           ]
         }
       },
@@ -914,21 +754,14 @@
         "email"
       ]
     },
-    "public.member_role": {
-      "name": "member_role",
-      "schema": "public",
-      "values": [
-        "admin",
-        "leader",
-        "member"
-      ]
-    },
     "public.member_status": {
       "name": "member_status",
       "schema": "public",
       "values": [
         "pending",
-        "active"
+        "active",
+        "paused",
+        "ended"
       ]
     },
     "public.subscription_status": {
