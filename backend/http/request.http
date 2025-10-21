@@ -1,0 +1,25 @@
+POST http://localhost:3000/church
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsImNhdCI6ImNsX0I3ZDRQRDExMUFBQSIsImtpZCI6Imluc18zMmQ1MUo5TW1RbG43d1lsUzUzQ1dRWE1IZk4iLCJ0eXAiOiJKV1QifQ.eyJhenAiOiJodHRwOi8vbG9jYWxob3N0OjUxNzMiLCJleHAiOjE3NjA5ODQ1ODYsImZ2YSI6WzEwNzEsLTFdLCJpYXQiOjE3NjA5ODQ1MjYsImlzcyI6Imh0dHBzOi8vbm9ibGUtY2hpcG11bmstODguY2xlcmsuYWNjb3VudHMuZGV2IiwibmJmIjoxNzYwOTg0NTE2LCJzaWQiOiJzZXNzXzM0SjhJbUY3RXpKMEJlN2F0TjUzbEdFaEx1ayIsInN0cyI6ImFjdGl2ZSIsInN1YiI6InVzZXJfMzRKOElqUk9wNnh3OGZkTk9BN3lFWXVZcWl3IiwidiI6Mn0.Lp-c328F-7a2VBi03OQ5b1zolzYzKKt6lTHDWlZ9pBQMsUkvqFZxCMql0NuumY_mupEHUOd9ViDRVljYGIbTDrT7sZasJx-EG2WxIG5IxCALXElw2J2Et7knV7t2rw6yGcNkBK_pKwTKtyOkxTi6AobpKNCJ0u-dR7pUM2HyeQ13IOnKTBiMez489RQYy1WpAdhRig75-eMOVVeQPIY6EOphBo57S9WSDRO7DPtihL38Ikhi4cbaQ7pMysmE_Kn9mpEPRoxlAoEI-ojvLnCpGk6241cetid-ss7kWq8uKTG0GxXs0Z0e3OUKrM9pFbfp57-9DPDGuoQ1diH85TeQHA
+
+{
+    "businessName": "Igreja",
+    "publicName": "Igreja",
+    "cnpj": "85760094000150",   
+    "contactInfo":[
+        {
+            "type": "phone",
+            "value": "11952066489"
+        }
+    ],
+    "pastor": "currentUser",
+    "address": {
+        "street": "Rua José Teixeira de Oliveira",
+        "number": "81",
+        "neighborhood": "Água espraiada",
+        "state": "SP",
+        "city": "Cotia",
+        "zipCode": "06726486"
+    },
+    "plan": "starter"
+}

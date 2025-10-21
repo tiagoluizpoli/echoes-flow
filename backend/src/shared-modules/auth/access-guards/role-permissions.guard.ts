@@ -3,32 +3,26 @@
 import {
   type CanActivate,
   type ExecutionContext,
+  Inject,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import type { Reflector } from '@nestjs/core';
+import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { MemberAssociationsRepository } from 'src/shared-modules/database';
-import { PERMISSIONS_KEY } from '../decorators';
 
-// Mapeamento de roles para permissões
-const ROLE_PERMISSIONS_MAP: { [key: string]: string[] } = {
-  admin: [
-    'finances:create',
-    'finances:view',
-    'events:create',
-    'events:view',
-    'members:manage',
-  ],
-  leader: ['finances:view', 'events:create', 'events:view'],
-  member: ['events:view'],
-};
+import { ChurchRepository, UserRepository } from 'src/shared-modules/database';
+import { PERMISSIONS_KEY } from '../decorators';
+import { hasPermission } from '../permission-system';
+
+// Deprecaed.
+// Keeping this as example, delete as soon as it is no longer needed.
 
 @Injectable()
 export class RolePermissionsGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    private readonly memberAssociationsRepository: MemberAssociationsRepository,
+    @Inject(Reflector) private readonly reflector: Reflector,
+    private readonly userRepository: UserRepository,
+    private readonly churchRepository: ChurchRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -41,32 +35,41 @@ export class RolePermissionsGuard implements CanActivate {
       return true;
     }
 
+    console.log({ requiredPermissions });
+
     const request = context.switchToHttp().getRequest<Request>();
     const { user } = request;
-
     if (!user) throw new UnauthorizedException();
 
+    const churchId = request.headers['x-flow-church-id'];
+
+    if (!churchId || typeof churchId !== 'string') {
+      throw new UnauthorizedException('Church ID não fornecido.');
+    }
+
     // 1. Obtém a associação de membro para pegar a role
-    const memberAssociation =
-      await this.memberAssociationsRepository.findByUserIdAndOrgId(
-        user.sub,
-        user.org_id ?? '',
-      );
+    const dbUser = await this.userRepository.getUserById(user.userId);
 
     // Se o usuário não for um membro da organização, nega o acesso
-    if (!memberAssociation) {
+    if (!dbUser) {
       throw new UnauthorizedException('Usuário não é membro da organização.');
     }
 
-    const userRole = memberAssociation.role;
-    const userPermissions = ROLE_PERMISSIONS_MAP[userRole] || [];
+    const church = await this.churchRepository.findById(churchId);
 
-    // 2. Verifica se a role do usuário concede todas as permissões necessárias
-    const hasPermission = requiredPermissions.every((permission) =>
-      userPermissions.includes(permission),
+    if (!church) {
+      throw new UnauthorizedException('Organização não encontrada.');
+    }
+
+    const hasPermissionResult = hasPermission(
+      dbUser,
+      churchId,
+      'church',
+      'view',
+      church,
     );
 
-    if (!hasPermission) {
+    if (!hasPermissionResult) {
       throw new UnauthorizedException(
         'Permissão insuficiente para realizar esta ação.',
       );
