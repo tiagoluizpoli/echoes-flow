@@ -34,6 +34,27 @@ export const OnboardingContent = () => {
     </div>
   );
 
+  const button = (
+    <div className="w-full flex justify-end">
+      <Button
+        type="submit"
+        className="flex items-center justify-start min-w-52"
+      >
+        {Date.now() < 0 ? (
+          <>
+            <div className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+            Criando...
+          </>
+        ) : (
+          <>
+            <Check className="ml-2 h-4 w-4" />
+            Finalizar Cadastro
+          </>
+        )}
+      </Button>
+    </div>
+  );
+
   return (
     <div className="w-full bg-gradient-to-b from-background to-secondary/20">
       {header}
@@ -59,24 +80,7 @@ export const OnboardingContent = () => {
 
               <AddressForm />
 
-              <div className="w-full flex justify-end">
-                <Button
-                  type="submit"
-                  className="flex items-center justify-start min-w-52"
-                >
-                  {Date.now() < 0 ? (
-                    <>
-                      <div className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
-                      Criando...
-                    </>
-                  ) : (
-                    <>
-                      <Check className="ml-2 h-4 w-4" />
-                      Finalizar Cadastro
-                    </>
-                  )}
-                </Button>
-              </div>
+              {button}
             </CardContent>
           </Card>
         </form>
