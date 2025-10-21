@@ -7,6 +7,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { numbersOnly } from '@/core';
 import { useOnboarding } from '../context';
 
 export const ChurchInfoForm = () => {
@@ -35,7 +36,11 @@ export const ChurchInfoForm = () => {
           <FormItem>
             <FormLabel>CNPJ</FormLabel>
             <FormControl>
-              <Input placeholder="00.000.000/0000-00" {...field} />
+              <Input
+                placeholder="00.000.000/0000-00"
+                {...field}
+                onChange={(e) => field.onChange(numbersOnly(e.target.value))}
+              />
             </FormControl>
             <FormMessage />
           </FormItem>
