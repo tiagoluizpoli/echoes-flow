@@ -1,80 +1,86 @@
-import { ArrowLeft, Church } from 'lucide-react';
+import { ArrowLeft, Check, Church } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Form } from '@/components/ui/form';
-import { Confirmation, OrganizationForm, PlanSelection } from './components';
-import { useOnboarding } from './context';
 
+import { Separator } from '@/components/ui/separator';
+import { AddressForm, ChurchInfoForm, ContactInfoForm } from './components';
+import { useOnboarding } from './context';
 export const OnboardingContent = () => {
-  const { form, step, onSubmit } = useOnboarding();
+  const { form, onSubmit } = useOnboarding();
+
+  const header = (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex items-center justify-between mb-8">
+        <Link
+          to="/"
+          className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Voltar
+        </Link>
+        <div className="flex items-center gap-2">
+          <Church className="h-6 w-6 text-primary" />
+          <span className="font-bold text-xl">Echoes Flow</span>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="w-full bg-gradient-to-b from-background to-secondary/20">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Link
-            to="/"
-            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
-          >
-            <ArrowLeft className="h-4 w-4" />
-            Voltar
-          </Link>
-          <div className="flex items-center gap-2">
-            <Church className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl">Echoes Flow</span>
-          </div>
-        </div>
+      {header}
 
-        {/* Progress Indicator */}
-        <div className="flex items-center justify-center mb-12">
-          <div className="flex items-center space-x-4">
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                step >= 1
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              1
-            </div>
-            <div
-              className={`w-16 h-1 ${step >= 2 ? 'bg-primary' : 'bg-muted'}`}
-            />
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                step >= 2
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              2
-            </div>
-            <div
-              className={`w-16 h-1 ${step >= 3 ? 'bg-primary' : 'bg-muted'}`}
-            />
-            <div
-              className={`flex items-center justify-center w-8 h-8 rounded-full ${
-                step >= 3
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground'
-              }`}
-            >
-              3
-            </div>
-          </div>
-        </div>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            {/* Step 1: Church Information */}
-            {step === 1 && <OrganizationForm />}
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mb-4">
+          {/* <OrganizationForm /> */}
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">Dados da sua Igreja</CardTitle>
+              <CardDescription>
+                Vamos conhecer um pouco mais sobre sua igreja
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <ChurchInfoForm />
 
-            {/* Step 2: Plan Selection */}
-            {step === 2 && <PlanSelection />}
+              <Separator />
 
-            {/* Step 3: Review and Confirm */}
-            {step === 3 && <Confirmation />}
-          </form>
-        </Form>
-      </div>
+              <ContactInfoForm />
+
+              <Separator />
+
+              <AddressForm />
+
+              <div className="w-full flex justify-end">
+                <Button
+                  type="submit"
+                  className="flex items-center justify-start min-w-52"
+                >
+                  {Date.now() < 0 ? (
+                    <>
+                      <div className="animate-spin mr-2 h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+                      Criando...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="ml-2 h-4 w-4" />
+                      Finalizar Cadastro
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </form>
+      </Form>
     </div>
   );
 };

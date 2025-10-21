@@ -1,12 +1,10 @@
 import { createContext, useContext } from 'react';
 import { type UseFormReturn } from 'react-hook-form';
-import type { CreateChurchData } from './onboarding-provider';
+import type { CreateChurchParams } from '../core';
 
 interface OnboardingContextType {
-  step: number;
-  setStep: (value: number) => void;
-  form: UseFormReturn<CreateChurchData>;
-  onSubmit: (data: CreateChurchData) => void;
+  form: UseFormReturn<CreateChurchParams>;
+  onSubmit: (data: CreateChurchParams) => void;
 }
 export const OnboardingContext = createContext<
   OnboardingContextType | undefined

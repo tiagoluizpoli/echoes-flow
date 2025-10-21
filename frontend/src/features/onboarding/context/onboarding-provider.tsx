@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   type CreateChurchParams,
@@ -9,30 +9,30 @@ import {
 import { OnboardingContext } from './onboarding-context';
 
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
-  const [step, setStep] = useState(1);
-
   const { mutateAsync } = useCreateChurchMutation();
   const form = useForm<CreateChurchParams>({
     resolver: zodResolver(createChurchParamsSchema),
+    mode: 'onBlur',
     defaultValues: {
-      //   churchName: '',
-      //   pastorName: '',
-      //   email: '',
-      //   phone: '',
-      //   address: '',
-      //   city: '',
-      //   state: '',
-      //   members: '',
-      //   description: '',
-      churchName: 'Igreja da Restauração',
-      pastorName: 'Reinaldo Fantin',
-      email: 'teste@teste.com',
-      phone: '11952066658',
-      address: 'Rua das Flores, 123',
-      city: 'Cotia',
-      state: 'SP',
+      businessName: '',
+      publicName: '',
+      cnpj: '',
       description: '',
-      plan: 'growth',
+      contactInfo: [
+        {
+          type: 'phone',
+          value: '',
+        },
+      ],
+      address: {
+        street: '',
+        number: '',
+        complement: '',
+        neighborhood: '',
+        state: '',
+        city: '',
+        zipCode: '',
+      },
     },
   });
 
@@ -44,8 +44,6 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   return (
     <OnboardingContext.Provider
       value={{
-        step,
-        setStep,
         form,
         onSubmit,
       }}
