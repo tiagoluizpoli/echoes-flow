@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { and, eq, inArray, isNull, sql } from 'drizzle-orm';
+import { Role } from 'src/shared-modules/auth/permission-system';
 import { MemberAssociation, User } from 'src/shared-modules/core';
-import { Role } from 'src/shared-modules/core/auth';
 import { db, memberAssociationsTable, userTable } from '../drizzle-setup';
 
 @Injectable()

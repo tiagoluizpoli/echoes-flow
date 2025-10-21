@@ -1,16 +1,15 @@
+import { Role } from 'src/shared-modules/auth/permission-system';
 import { Entity } from './base/entity';
 import { User } from './user';
 
-const roles = ['admin', 'leader', 'member'] as const;
-type Role = (typeof roles)[number];
-
-const statuses = ['pending', 'active', 'paused', 'ended'] as const;
-type Status = (typeof statuses)[number];
+export const memberStatuses = ['pending', 'active', 'paused', 'ended'] as const;
+type Status = (typeof memberStatuses)[number];
 
 interface MemberAssociationsProps {
   userId: string;
-  organizationId: string;
-  role: Role;
+  churchId: string;
+  owner: boolean;
+  roles: Role[];
   status: Status;
   createdAt: Date;
   user?: User;
@@ -25,12 +24,16 @@ export class MemberAssociation extends Entity<MemberAssociationsProps> {
     return this.props.userId;
   }
 
-  get organizationId(): string {
-    return this.props.organizationId;
+  get churchId(): string {
+    return this.props.churchId;
   }
 
-  get role(): Role {
-    return this.props.role;
+  get owner(): boolean {
+    return this.props.owner;
+  }
+
+  get roles(): Role[] {
+    return this.props.roles;
   }
 
   get status(): Status {

@@ -8,11 +8,11 @@ import {
   type RawBodyRequest,
   Req,
 } from '@nestjs/common';
-import { ClerkService } from '../clerk/clerk.service';
+import { ClerkWebhookService } from '../clerk/clerk-webhook.service';
 
 @Controller('webhooks')
 export class WebhooksController {
-  constructor(private readonly clerkService: ClerkService) {}
+  constructor(private readonly clerkService: ClerkWebhookService) {}
 
   @Post('/clerk')
   @HttpCode(201)

@@ -2,11 +2,12 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Inject,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Request } from 'express';
-import { OrganizationsRepository } from 'src/shared-modules/database';
+import { ChurchRepository } from 'src/shared-modules/database';
 import { SUBSCRIPTION_STATUS_KEY } from '../decorators';
 
 // Definimos esta interface para tipar o objeto de Request com os dados injetados pelo ClerkGuard
@@ -22,8 +23,8 @@ interface RequestWithAuth extends Request {
 @Injectable()
 export class SubscriptionStatusGuard implements CanActivate {
   constructor(
-    private reflector: Reflector,
-    private readonly organizationsRepository: OrganizationsRepository,
+    @Inject(Reflector) private readonly reflector: Reflector,
+    private readonly churchRepository: ChurchRepository,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -46,7 +47,7 @@ export class SubscriptionStatusGuard implements CanActivate {
     }
 
     // 1. Usa o repositório para obter o status da organização
-    const [organization] = await this.organizationsRepository.findById(orgId);
+    const organization = await this.churchRepository.findById(orgId);
 
     // Se a organização não for encontrada ou não tiver um status de assinatura
     if (!organization || !organization.subscriptionStatus) {

@@ -1,8 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { setupGlobalFilters } from './setup';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { rawBody: true });
+
+  setupGlobalFilters(app);
+
+  // app.use(json({ type: '*/*' }));
 
   app.enableCors({
     origin: '*',

@@ -23,7 +23,7 @@ interface SyncUserParams {
 
 const { CLERK_WEBHOOK_SECRET } = env;
 @Injectable()
-export class ClerkService {
+export class ClerkWebhookService {
   private webhookSecret: string;
 
   constructor(private readonly userRepository: UserRepository) {
@@ -63,7 +63,7 @@ export class ClerkService {
         event.data.id,
       );
 
-      await this.userRepository.createUser(user);
+      await this.userRepository.systemCreateUser(user);
     }
 
     if (event.type === 'user.updated') {
@@ -76,11 +76,13 @@ export class ClerkService {
         event.data.id,
       );
 
-      await this.userRepository.updateUser(user);
+      await this.userRepository.systemUpdateUser(user);
     }
 
     if (event.type === 'user.deleted') {
-      if (!event.data.id) throw new UnprocessableEntityException('');
+      if (!event.data.id)
+        throw new UnprocessableEntityException('User ID not available');
+
       await this.userRepository.deleteUser(event.data.id);
     }
   }

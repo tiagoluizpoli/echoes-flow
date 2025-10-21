@@ -1,12 +1,12 @@
 import {
   BadRequestException,
-  type CallHandler,
-  type ExecutionContext,
-  type NestInterceptor,
+  CallHandler,
+  ExecutionContext,
+  NestInterceptor,
 } from '@nestjs/common';
-import type { Request } from 'express';
-import type { Observable } from 'rxjs';
-import type { ZodError, ZodObject } from 'zod';
+import { Request } from 'express';
+import { Observable } from 'rxjs';
+import { ZodError, ZodObject } from 'zod';
 
 interface ZodValidationInterceptorParams {
   headerSchema?: ZodObject<any>;
@@ -22,24 +22,29 @@ export class ZodValidationInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
+    let validationFailure: 'header' | 'body' | 'query' | 'params' | undefined;
     try {
       const { headerSchema, bodySchema, querySchema, paramsSchema } =
         this.params;
       const request: Request = context.switchToHttp().getRequest();
 
       if (headerSchema) {
+        validationFailure = 'header';
         headerSchema.parse(request.headers);
       }
 
       if (paramsSchema) {
+        validationFailure = 'params';
         paramsSchema.parse(request.params);
       }
 
       if (querySchema) {
+        validationFailure = 'query';
         querySchema.parse(request.query);
       }
 
       if (bodySchema) {
+        validationFailure = 'body';
         bodySchema.parse(request.body);
       }
 
@@ -48,12 +53,16 @@ export class ZodValidationInterceptor implements NestInterceptor {
       const zodError = error as ZodError;
 
       console.log({ zodError });
-      throw new BadRequestException(`validation(s) failed.`, {
-        cause: zodError.issues.map((issue) => ({
-          path: issue.path.join('.'),
-          message: issue.message,
-        })),
-      });
+      throw new BadRequestException(
+        `${validationFailure} validation(s) failed.`,
+        {
+          cause: zodError.issues.map((issue) => ({
+            path: `${validationFailure}.${issue.path.join('.')}`,
+            expected: (issue as any).values ?? undefined,
+            message: issue.message,
+          })),
+        },
+      );
     }
   }
 }

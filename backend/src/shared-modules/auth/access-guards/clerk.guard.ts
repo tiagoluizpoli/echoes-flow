@@ -11,12 +11,16 @@ export class ClerkGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     const authHeader = request.headers.authorization;
+    const path = request.path;
+
+    console.log({ path });
 
     if (!authHeader) {
       return false;
     }
 
     const token = authHeader.split(' ')[1];
+
     if (!token) {
       return false;
     }
@@ -24,13 +28,9 @@ export class ClerkGuard implements CanActivate {
     try {
       const payload = await clerkClient.verifyToken(token);
 
-      payload.org_id;
-
-      console.log({
-        payload,
-      });
-
-      request.user = payload;
+      request.user = {
+        userId: payload.sub,
+      };
 
       return true;
     } catch (_) {
