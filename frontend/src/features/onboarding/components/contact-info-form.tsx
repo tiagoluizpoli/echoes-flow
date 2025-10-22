@@ -1,3 +1,4 @@
+import { Icon } from '@iconify/react';
 import { useFieldArray } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import {
@@ -102,9 +103,9 @@ export const ContactInfoForm = () => {
                                   remove(index);
                                 }
                               }} // Remove method from useFieldArray
-                              className="shrink-0"
+                              className="cursor-pointer shrink-0"
                             >
-                              ❌
+                              <Icon icon={'mingcute:delete-2-line'} />
                             </Button>
                           </div>
                         </FormControl>
