@@ -7,7 +7,7 @@ async function bootstrap() {
 
   setupGlobalFilters(app);
 
-  // app.use(json({ type: '*/*' }));
+  app.setGlobalPrefix('api/v1');
 
   app.enableCors({
     origin: '*',
