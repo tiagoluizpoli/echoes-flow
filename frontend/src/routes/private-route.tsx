@@ -1,11 +1,13 @@
 // src/components/routes/PrivateRoute.tsx
 
 import { useUser } from '@clerk/clerk-react';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { RootLayout } from '@/layout';
 
 export const PrivateRoute = () => {
   const { user, isLoaded, isSignedIn } = useUser();
+  const { pathname } = useLocation();
+  const navigate = useNavigate();
 
   if (!isLoaded) {
     return <div>Carregando...</div>; // Ou um spinner de carregamento
@@ -15,20 +17,23 @@ export const PrivateRoute = () => {
     return <Navigate to="/sign-in" />; // Redireciona para o login
   }
 
-  const { organizationMemberships } = user;
+  const { publicMetadata } = user;
 
-  if (!organizationMemberships.length) {
+  if (publicMetadata.churchs.length === 0) {
     return (
       <>
         <Outlet />
-        <Navigate to={'/onboarding/completed'} />
+        <Navigate to={'/onboarding'} />
       </>
     );
   }
 
+  if (pathname === '/onboarding/completed') {
+    navigate('/dashboard');
+  }
   return (
     <RootLayout>
       <Outlet />
     </RootLayout>
-  ); // Renderiza a rota filha se estiver autenticado
+  );
 };

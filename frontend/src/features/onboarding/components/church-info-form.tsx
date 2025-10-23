@@ -54,7 +54,7 @@ export const ChurchInfoForm = () => {
           <FormItem className="md:col-span-2">
             <FormLabel>Nome</FormLabel>
             <FormControl>
-              <Input placeholder="Pastor João Silva" {...field} />
+              <Input placeholder="Igreja Batista" {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>
