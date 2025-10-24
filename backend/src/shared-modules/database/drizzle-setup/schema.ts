@@ -65,7 +65,7 @@ export const churchContactInfoTable = pgTable(
       .notNull()
       .references(() => churchTable.id, { onDelete: 'cascade' }),
     type: contactTypeEnum('type').notNull(),
-    maskRegex: varchar('mask_regex', { length: 255 }).notNull(),
+    maskRegex: varchar('mask_regex', { length: 255 }),
     value: varchar('value', { length: 255 }).notNull(),
     createdAt: timestamp('created_at').notNull().defaultNow(),
     lastUpdatedAt: timestamp('last_updated_at'),

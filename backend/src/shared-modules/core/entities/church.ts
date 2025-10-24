@@ -89,6 +89,10 @@ export class Church extends Entity<ChurchProps> {
     return this.props.contactInfo;
   }
 
+  get address(): Address | undefined {
+    return this.props.address;
+  }
+
   static create(props: ChurchProps, id?: string) {
     if (!props.createdAt) props.createdAt = new Date();
 

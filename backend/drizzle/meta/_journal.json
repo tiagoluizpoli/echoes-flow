@@ -8,6 +8,13 @@
       "when": 1760925030302,
       "tag": "0000_far_cerebro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1761266631058,
+      "tag": "0001_lucky_karen_page",
+      "breakpoints": true
     }
   ]
 }

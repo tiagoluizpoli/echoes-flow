@@ -1,0 +1,1 @@
+ALTER TABLE "church_contact_info" ALTER COLUMN "mask_regex" DROP NOT NULL;

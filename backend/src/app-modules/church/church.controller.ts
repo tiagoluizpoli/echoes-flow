@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -31,5 +32,14 @@ export class ChurchController {
   @UseGuards(ClerkGuard)
   async createChurch(@Body() body: CreateChurchParams, @Req() req: Request) {
     await this.churchService.createChurch(body, req.user.userId);
+  }
+
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(ClerkGuard)
+  async getChurch(@Req() req: Request) {
+    console.log(req.user);
+    const churchs = await this.churchService.getUserChurchs(req.user.userId);
+    return churchs;
   }
 }

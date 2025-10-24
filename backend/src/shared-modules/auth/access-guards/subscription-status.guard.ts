@@ -50,13 +50,11 @@ export class SubscriptionStatusGuard implements CanActivate {
     const organization = await this.churchRepository.findById(orgId);
 
     // Se a organização não for encontrada ou não tiver um status de assinatura
-    if (!organization || !organization.subscriptionStatus) {
-      throw new ForbiddenException(
-        'Organização não encontrada ou sem status de assinatura.',
-      );
+    if (!organization) {
+      throw new ForbiddenException('Organização não encontrada ');
     }
 
-    const currentStatus = organization.subscriptionStatus;
+    const currentStatus = '';
 
     // 2. Verifica se o status atual da organização está entre os status permitidos
     const hasPermission = requiredStatuses.includes(currentStatus);

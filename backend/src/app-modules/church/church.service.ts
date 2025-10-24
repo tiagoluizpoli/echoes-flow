@@ -51,4 +51,8 @@ export class ChurchService {
 
     await this.userRepository.updateUser(user);
   }
+
+  async getUserChurchs(userId: string) {
+    return await this.churchRepository.findChurchsByUserId(userId);
+  }
 }
